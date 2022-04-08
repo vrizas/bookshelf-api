@@ -67,8 +67,69 @@ const addBookHandler = (request, h) => {
   }).code(500)
 }
 
-const getAllBooksHandler = () => {
-  const booksPicked = books.map((book) => {
+const getAllBooksHandler = (request, h) => {
+  const { name, reading, finished } = request.query
+
+  let booksPicked = []
+
+  if (name) {
+    const filteredBooks = books.filter((book) => book.name.toLowerCase().includes(name.toLowerCase()))
+
+    filteredBooks.forEach((book) => {
+      booksPicked.push({
+        id: book.id,
+        name: book.name,
+        publisher: book.publisher
+      })
+    })
+  }
+
+  if (reading) {
+    let filteredBooks = []
+
+    if (reading === '1') {
+      filteredBooks = books.filter((book) => book.reading === true)
+    } else if (reading === '0') {
+      filteredBooks = books.filter((book) => book.reading === false)
+    }
+
+    filteredBooks.forEach((book) => {
+      booksPicked.push({
+        id: book.id,
+        name: book.name,
+        publisher: book.publisher
+      })
+    })
+  }
+
+  if (finished) {
+    let filteredBooks = []
+
+    if (finished === '1') {
+      filteredBooks = books.filter((book) => book.finished === true)
+    } else if (finished === '0') {
+      filteredBooks = books.filter((book) => book.finished === false)
+    }
+
+    filteredBooks.forEach((book) => {
+      booksPicked.push({
+        id: book.id,
+        name: book.name,
+        publisher: book.publisher
+      })
+    })
+  }
+
+  if (name || reading || finished) {
+    return {
+      status: 'success',
+      data: {
+        books: booksPicked
+      }
+    }
+  }
+
+  booksPicked = books.map((book) => {
     return {
       id: book.id,
       name: book.name,
